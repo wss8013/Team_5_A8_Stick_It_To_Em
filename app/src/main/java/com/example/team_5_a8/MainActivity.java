@@ -4,6 +4,7 @@ import static java.security.AccessController.getContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         userNameInput = findViewById(R.id.editTextTextPersonName);
         registerBtn = findViewById(R.id.button_register);
 
+        //set up the database reference
         myDataBase = FirebaseDatabase.getInstance().getReference();
 
 
@@ -60,9 +62,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+
         //create the new user and upload it to the database
         User user = new User(userName, android_id);
         myDataBase.child("user").setValue(user);
 
+
+        //after we successfully update the data base and the user name, we direct the user to the next activity
+        Intent sendStickerToFriendsIntent = new Intent(this, sendStickerToFriendsActivity.class);
+        startActivity(sendStickerToFriendsIntent);
     }
 }
