@@ -76,7 +76,7 @@
         android:id="@+id/image6"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/sandwich"
+        android:src="@drawable/sardines"
         app:layout_constraintStart_toEndOf="@id/image5"
         app:layout_constraintTop_toBottomOf="@id/image3"
         android:layout_marginTop="20dp"
