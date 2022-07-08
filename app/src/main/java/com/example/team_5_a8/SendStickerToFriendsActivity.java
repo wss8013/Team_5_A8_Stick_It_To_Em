@@ -1,6 +1,5 @@
 package com.example.team_5_a8;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -10,13 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SendStickerToFriendsActivity extends AppCompatActivity {
@@ -25,17 +23,39 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
     ImageView image1, image2, image3;
     Map<ImageView, Boolean> imageViewIsClickedMap = new HashMap<>();
 
+    Map<String,String> userNameToUserIdMap = new HashMap<>();
+    Map<String,String> userIdToUserNameMap = new HashMap<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_sticker_to_friends);
         allFriends = findViewById(R.id.friend_spinner);
         myDataBase = FirebaseDatabase.getInstance().getReference();
-        ArrayAdapter<CharSequence> friendNameAdapter = ArrayAdapter.createFromResource(this,
-                R.array.friend_names, android.R.layout.simple_spinner_item);
-        friendNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        allFriends.setAdapter(friendNameAdapter);
         initializeAllImageSticker();
+        initializeSpinner();
+    }
+
+    private void initializeSpinner() {
+        myDataBase.child("users").get().addOnCompleteListener((task)->{
+            HashMap<String,HashMap<String,String>>tempMap =  (HashMap)task.getResult().getValue();
+            List<String> userNames = new ArrayList<>();
+
+            // populate user id and name
+            for (String userId : tempMap.keySet()) {
+                String userName = tempMap.get(userId).get("username");
+                userNames.add(userName);
+                userIdToUserNameMap.put(userId,userName);
+                userNameToUserIdMap.put(userName,userId);
+            }
+            ArrayAdapter<String> adapter
+                    = new ArrayAdapter<>(getApplicationContext(),
+                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                    userNames);
+            allFriends.setAdapter(adapter);
+        });
+
     }
 
     private void initializeAllImageSticker() {
