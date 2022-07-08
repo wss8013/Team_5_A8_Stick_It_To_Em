@@ -1,7 +1,5 @@
 package com.example.team_5_a8;
 
-import static java.security.AccessController.getContext;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -50,26 +48,21 @@ public class MainActivity extends AppCompatActivity {
         //get the user input username data
         String userName;
         userName = userNameInput.getText().toString();
-
         //get the current device id
         String android_id = Secure.getString(
                 getApplicationContext().getContentResolver(), Secure.ANDROID_ID);
-
         //validate for the user name input
         if (TextUtils.isEmpty(userName)) {
             Toast.makeText(getApplicationContext(),
                             "Please enter a valid user name",  Toast.LENGTH_LONG).show();
             return;
         }
-
-
         //create the new user and upload it to the database
         User user = new User(userName, android_id);
         myDataBase.child("users").child(android_id).setValue(user);
 
-
         //after we successfully update the data base and the user name, we direct the user to the next activity
-        Intent sendStickerToFriendsIntent = new Intent(this, sendStickerToFriendsActivity.class);
+        Intent sendStickerToFriendsIntent = new Intent(this, SendStickerToFriendsActivity.class);
         startActivity(sendStickerToFriendsIntent);
     }
 }
