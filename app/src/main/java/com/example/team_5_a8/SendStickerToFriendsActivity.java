@@ -62,9 +62,9 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         image1 = findViewById(R.id.image1);
         image2 = findViewById(R.id.image2);
         image3 = findViewById(R.id.image3);
-        image1 = findViewById(R.id.image4);
-        image2 = findViewById(R.id.image5);
-        image3 = findViewById(R.id.image6);
+        image4 = findViewById(R.id.image4);
+        image5 = findViewById(R.id.image5);
+        image6 = findViewById(R.id.image6);
         image1.setClickable(true);
         image2.setClickable(true);
         image3.setClickable(true);
