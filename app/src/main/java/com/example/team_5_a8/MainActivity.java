@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         //create the new user and upload it to the database
         User user = new User(userName, android_id);
-        myDataBase.child("user").setValue(user);
+        myDataBase.child("users").child(android_id).setValue(user);
 
 
         //after we successfully update the data base and the user name, we direct the user to the next activity
