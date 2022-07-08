@@ -4,6 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".sendStickerToFriendsActivity">
+    tools:context=".SendStickerToFriendsActivity">
+    <TextView
+        android:id="@+id/send_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:text="Send To"/>
+    <Spinner
+        android:id="@+id/friend_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/send_to"
+        app:layout_constraintTop_toTopOf="@id/send_to"
+        android:textSize="10sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
