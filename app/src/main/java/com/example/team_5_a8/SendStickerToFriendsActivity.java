@@ -35,6 +35,10 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
                 R.array.friend_names, android.R.layout.simple_spinner_item);
         friendNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         allFriends.setAdapter(friendNameAdapter);
+        initializeAllImageSticker();
+    }
+
+    private void initializeAllImageSticker() {
         image1 = findViewById(R.id.image1);
         image2 = findViewById(R.id.image2);
         image3 = findViewById(R.id.image3);
@@ -44,22 +48,9 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         imageViewIsClickedMap.put(image1, false);
         imageViewIsClickedMap.put(image2, false);
         imageViewIsClickedMap.put(image3, false);
-
         image1.setOnClickListener((v) -> imageViewOnClickListener(v));
         image2.setOnClickListener((v) -> imageViewOnClickListener(v));
         image3.setOnClickListener((v) -> imageViewOnClickListener(v));
-
-//        myDataBase.child("user").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if (!task.isSuccessful()) {
-//                    System.out.println("firebase"+ "Error getting data"+task.getException());
-//                    return;
-//                }
-//              String cloudFriend =  String.valueOf( task.getResult().getValue());
-//            }
-//        });
-
     }
 
     public void imageViewOnClickListener(View v) {
@@ -101,5 +92,4 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         }
         return -1;
     }
-
 }
