@@ -20,7 +20,7 @@ import java.util.Map;
 public class SendStickerToFriendsActivity extends AppCompatActivity {
     private DatabaseReference myDataBase;
     Spinner allFriends;
-    ImageView image1, image2, image3;
+    ImageView image1, image2, image3,image4,image5,image6;
     Map<ImageView, Boolean> imageViewIsClickedMap = new HashMap<>();
 
     Map<String,String> userNameToUserIdMap = new HashMap<>();
@@ -62,15 +62,27 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         image1 = findViewById(R.id.image1);
         image2 = findViewById(R.id.image2);
         image3 = findViewById(R.id.image3);
+        image1 = findViewById(R.id.image4);
+        image2 = findViewById(R.id.image5);
+        image3 = findViewById(R.id.image6);
         image1.setClickable(true);
         image2.setClickable(true);
         image3.setClickable(true);
+        image4.setClickable(true);
+        image5.setClickable(true);
+        image6.setClickable(true);
         imageViewIsClickedMap.put(image1, false);
         imageViewIsClickedMap.put(image2, false);
         imageViewIsClickedMap.put(image3, false);
+        imageViewIsClickedMap.put(image4, false);
+        imageViewIsClickedMap.put(image5, false);
+        imageViewIsClickedMap.put(image6, false);
         image1.setOnClickListener((v) -> imageViewOnClickListener(v));
         image2.setOnClickListener((v) -> imageViewOnClickListener(v));
         image3.setOnClickListener((v) -> imageViewOnClickListener(v));
+        image4.setOnClickListener((v) -> imageViewOnClickListener(v));
+        image5.setOnClickListener((v) -> imageViewOnClickListener(v));
+        image6.setOnClickListener((v) -> imageViewOnClickListener(v));
     }
 
     public void imageViewOnClickListener(View v) {
