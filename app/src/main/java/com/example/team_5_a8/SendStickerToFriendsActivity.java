@@ -22,10 +22,8 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
     Spinner allFriends;
     ImageView image1, image2, image3,image4,image5,image6;
     Map<ImageView, Boolean> imageViewIsClickedMap = new HashMap<>();
-
     Map<String,String> userNameToUserIdMap = new HashMap<>();
     Map<String,String> userIdToUserNameMap = new HashMap<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +53,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
                     userNames);
             allFriends.setAdapter(adapter);
         });
-
     }
-
     private void initializeAllImageSticker() {
         image1 = findViewById(R.id.image1);
         image2 = findViewById(R.id.image2);
