@@ -113,6 +113,12 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
                         return 2;
                     case R.id.image3:
                         return 3;
+                    case R.id.image4:
+                        return 4;
+                    case R.id.image5:
+                        return 5;
+                    case R.id.image6:
+                        return 6;
                     default:
                         // do nothing;
                 }
