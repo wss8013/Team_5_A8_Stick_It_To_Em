@@ -1,17 +1,14 @@
 package com.example.team_5_a8;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -22,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +31,7 @@ import java.util.Map;
 public class SendStickerToFriendsActivity extends AppCompatActivity {
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
     private static final String CHANNEL_ID = "Team_5_A8_Stick_It_To_Em";
+    private MyFirebaseMessagingService firebaseService;
 
     private DatabaseReference myDataBase;
     Spinner allFriends;
@@ -50,6 +49,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         myDataBase = FirebaseDatabase.getInstance().getReference();
         initializeAllImageSticker();
         initializeSpinner();
+        firebaseService = new MyFirebaseMessagingService(getCurrentUsername(), myDataBase);
     }
 
     private void initializeSpinner() {
@@ -150,12 +150,25 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
 
         Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.bean_stew);
 
+
         myDataBase.child("stickers").child(sticker.getKey()).setValue(sticker);
         Context context = getApplicationContext();
         CharSequence text = "sticker sent to " + selectedUsername;
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+
+        //
+        String registrationToken = "YOUR_REGISTRATION_TOKEN";
+
+        Message message = Message.Builder
+                .putData("score", "850")
+                .putData("time", "2:45")
+                .setToken(registrationToken)
+                .build();
+
+        String response = FirebaseMessaging.getInstance().send(message);
+        System.out.println("Successfully sent message: " + response);
     }
 
     private String getCurrentUsername() {

@@ -1,17 +1,14 @@
 package com.example.team_5_a8;
 
-import java.util.ArrayList;
 
 public class User {
     public String username;
     public String userDeviceID;
-    public ArrayList<Sticker> received;
-    public ArrayList<Sticker> sent;
+    public String token;
 
-    public User(String username, String userDeviceID) {
+    public User(String username, String userDeviceID, String token) {
         this.username = username;
         this.userDeviceID = userDeviceID;
-        received = new ArrayList<>();
-        sent = new ArrayList<>();
+        this.token = token;
     }
 }
