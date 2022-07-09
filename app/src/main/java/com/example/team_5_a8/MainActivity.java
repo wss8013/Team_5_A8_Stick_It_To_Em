@@ -38,13 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Set on Click Listener on register button
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                registerUserAccount();
-            }
-        });
+        registerBtn.setOnClickListener(v -> registerUserAccount());
     }
 
     public void registerUserAccount() {
@@ -66,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     String token = task.getResult();
-                    System.out.println("token from ad on complete listener:" + token);
+                    System.out.println("token from add for " + userName +  ":" + token);
                     User user = new User(userName, android_id, token);
                     myDataBase.child("users").child(android_id).setValue(user);
                 });

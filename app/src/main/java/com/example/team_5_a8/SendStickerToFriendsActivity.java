@@ -1,15 +1,18 @@
 package com.example.team_5_a8;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,19 +22,30 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SendStickerToFriendsActivity extends AppCompatActivity {
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
-    private static final String CHANNEL_ID = "Team_5_A8_Stick_It_To_Em";
-    private MyFirebaseMessagingService firebaseService;
+    private static String SERVER_KEY;
+
 
     private DatabaseReference myDataBase;
     Spinner allFriends;
@@ -43,13 +57,27 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SERVER_KEY = "key=" + getProperties(getApplicationContext()).getProperty("SERVER_KEY");
         setContentView(R.layout.activity_send_sticker_to_friends);
         createNotificationChannel();
         allFriends = findViewById(R.id.friend_spinner);
         myDataBase = FirebaseDatabase.getInstance().getReference();
         initializeAllImageSticker();
         initializeSpinner();
-        firebaseService = new MyFirebaseMessagingService(getCurrentUsername(), myDataBase);
+    }
+
+    public static Properties getProperties(Context context)  {
+        Properties properties = new Properties();
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = null;
+        try {
+            inputStream = assetManager.open("firebase.properties");
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return properties;
     }
 
     private void initializeSpinner() {
@@ -121,13 +149,14 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         imageViewIsClickedMap.put(v, false);
     }
 
-    private void createNotificationChannel() {
+    public void createNotificationChannel() {
+        // This must be called early because it must be called before a notification is sent.
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         CharSequence name = getString(R.string.channel_name);
         String description = getString(R.string.channel_description);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id), name, importance);
         channel.setDescription(description);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
@@ -148,27 +177,93 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         }
         Sticker sticker = new Sticker(selectedImageId, getCurrentUsername(), selectedUsername, now());
 
-        Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.bean_stew);
-
-
+        // Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.bean_stew);
         myDataBase.child("stickers").child(sticker.getKey()).setValue(sticker);
-        Context context = getApplicationContext();
-        CharSequence text = "sticker sent to " + selectedUsername;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        myDataBase.child("users").child(userNameToUserIdMap.get(selectedUsername)).get().addOnCompleteListener((task) -> {
+            HashMap tempMap = (HashMap) task.getResult().getValue();
+            String token = tempMap.get("token").toString();
+            new Thread(() -> sendMessageToDevice(token, sticker)).start();
+        });
+    }
 
-        //
-        String registrationToken = "YOUR_REGISTRATION_TOKEN";
+    private void sendMessageToDevice(String targetToken, Sticker sticker) {
+        System.out.println("client token:" + targetToken);
+        // Prepare data
+        JSONObject jPayload = new JSONObject();
+        JSONObject jNotification = new JSONObject();
+        JSONObject jdata = new JSONObject();
+        try {
+            String title = "sticker from " + sticker.fromUser;
+            String msg = "this is a sticker " + sticker.id;
+            jNotification.put("title", title);
+            jNotification.put("body", msg);
+            jdata.put("title", "data:" + title);
+            jdata.put("content", "data:" + msg);
 
-        Message message = Message.Builder
-                .putData("score", "850")
-                .putData("time", "2:45")
-                .setToken(registrationToken)
-                .build();
+            jPayload.put("to", targetToken);
+            jPayload.put("priority", "high");
+            jPayload.put("notification", jNotification);
+            jPayload.put("data", jdata);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("Successfully sent message: " + response);
+
+        final String resp = fcmHttpConnection(SERVER_KEY, jPayload);
+        postToastMessage("Status from Server: " + resp, getApplicationContext());
+
+    }
+
+    private static void postToastMessage(final String message, final Context context){
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private static String fcmHttpConnection(String serverToken, JSONObject jsonObject) {
+        try {
+
+            // Open the HTTP connection and send the payload
+            URL url = new URL("https://fcm.googleapis.com/fcm/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", serverToken);
+            conn.setDoOutput(true);
+
+            // Send FCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jsonObject.toString().getBytes());
+            outputStream.close();
+
+            // Read FCM response.
+            InputStream inputStream = conn.getInputStream();
+            return convertStreamToString(inputStream);
+        } catch (IOException e) {
+            return "NULL";
+        }
+
+    }
+
+    private static String convertStreamToString(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String len;
+            while ((len = bufferedReader.readLine()) != null) {
+                stringBuilder.append(len);
+            }
+            bufferedReader.close();
+            return stringBuilder.toString().replace(",", ",\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private String getCurrentUsername() {

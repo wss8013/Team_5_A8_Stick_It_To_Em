@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Team_5_A8</string>
+    <string name="channel_id">Team_5_A8_Stick_It_toEm_channel</string>
     <string name="channel_name">Team_5_A8_Stick_It_To_Em</string>
     <string name="channel_description">Team_5_A8_Stick_It_To_Em</string>
     <string-array name="friend_names">
