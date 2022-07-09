@@ -199,6 +199,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
             jNotification.put("body", msg);
             jdata.put("title", "data:" + title);
             jdata.put("content", "data:" + msg);
+            jdata.put("image_id", sticker.id);
 
             jPayload.put("to", targetToken);
             jPayload.put("priority", "high");

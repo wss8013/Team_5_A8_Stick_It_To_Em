@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -27,6 +28,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -37,6 +40,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String CHANNEL_ID = "CHANNEL_ID";
     private static final String CHANNEL_NAME = "CHANNEL_NAME";
     private static final String CHANNEL_DESCRIPTION = "CHANNEL_DESCRIPTION";
+
+    private static final Map<Integer, Integer> idToDrawable = new HashMap<>();
 
     @SuppressLint("HardwareIds")
     @Override
@@ -49,6 +54,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             HashMap tempMap = (HashMap) task.getResult().getValue();
             username = tempMap.get("username").toString();
         });
+        idToDrawable.put(1, R.drawable.sandwich);
+        idToDrawable.put(2, R.drawable.goulash);
+        idToDrawable.put(3, R.drawable.bean_stew);
+        idToDrawable.put(4, R.drawable.lamb_peka);
+        idToDrawable.put(5, R.drawable.walnutroll);
+        idToDrawable.put(6, R.drawable.sardines);
+
     }
 
     @Override
@@ -82,7 +94,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (remoteMessage.getData().size() > 0) {
                     RemoteMessage.Notification notification = remoteMessage.getNotification();
                     assert notification != null;
-                    showNotification(notification);
+                    showNotification(notification, Integer.parseInt(Objects.requireNonNull(remoteMessage.getData().get("image_id"))));
                     postToastMessage(remoteMessage.getData().get("title"), getApplicationContext());
                 }
             }
@@ -95,13 +107,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         handler.post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param remoteMessageNotification FCM message  received.
-     */
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification) {
-
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, int imageId) {
+        System.out.println("start processing show notification");
         Intent intent = new Intent(this, SendStickerToFriendsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -113,16 +120,48 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
-        // Configure the notification channel
         notificationChannel.setDescription(CHANNEL_DESCRIPTION);
         notificationManager.createNotificationChannel(notificationChannel);
         builder = new NotificationCompat.Builder(this, CHANNEL_ID);
 
+        System.out.println("notification title: " + remoteMessageNotification.getTitle());
 
-        notification = builder.setContentTitle(remoteMessageNotification.getTitle())
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), idToDrawable.get(imageId));
+        notification = builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(remoteMessageNotification.getTitle())
                 .setContentText(remoteMessageNotification.getBody())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setAutoCancel(true)
+                .setLargeIcon(bm)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(bm)
+                        .bigLargeIcon(null))
+                .addAction(R.mipmap.ic_launcher, "Snooze", pendingIntent)
+                .build();
+        notificationManager.notify(0, notification);
+
+    }
+
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification) {
+        System.out.println("start processing show notification");
+        Intent intent = new Intent(this, SendStickerToFriendsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        Notification notification;
+        NotificationCompat.Builder builder;
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setDescription(CHANNEL_DESCRIPTION);
+        notificationManager.createNotificationChannel(notificationChannel);
+        builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+
+        System.out.println("notification title: " + remoteMessageNotification.getTitle());
+
+        notification = builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(remoteMessageNotification.getTitle())
+                .setContentText(remoteMessageNotification.getBody())
                 .setContentIntent(pendingIntent)
                 .build();
         notificationManager.notify(0, notification);
