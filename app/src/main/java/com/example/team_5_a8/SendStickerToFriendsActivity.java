@@ -1,23 +1,24 @@
 package com.example.team_5_a8;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -40,29 +41,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SendStickerToFriendsActivity extends AppCompatActivity {
     public static final String DATE_FORMAT_NOW = "yyyy-MM-dd HH:mm:ss";
     private static String SERVER_KEY;
 
-
+    private String myName;
+    private TextView myNameTV;
     private DatabaseReference myDataBase;
-    Spinner allFriends;
-    ImageView image1, image2, image3, image4, image5, image6;
-    Map<ImageView, Boolean> imageViewIsClickedMap = new HashMap<>();
-    Map<String, String> userNameToUserIdMap = new HashMap<>();
-    Map<String, String> userIdToUserNameMap = new HashMap<>();
+    private Spinner allFriends;
+    private ImageView image1, image2, image3, image4, image5, image6;
+    private TextView image1TV, image2TV, image3TV, image4TV, image5TV, image6TV;
+    private Map<ImageView, Integer> imageViewSentCountMap = new HashMap<>();
+    private Map<ImageView, Boolean> imageViewIsClickedMap = new HashMap<>();
+    private Map<ImageView, TextView> imageViewToTextViewMap = new HashMap<>();
+    private Map<String, String> userNameToUserIdMap = new HashMap<>();
+    private Map<String, String> userIdToUserNameMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            myName = extras.getString("user_name");
+        }
         SERVER_KEY = "key=" + getProperties(getApplicationContext()).getProperty("SERVER_KEY");
         setContentView(R.layout.activity_send_sticker_to_friends);
         createNotificationChannel();
         allFriends = findViewById(R.id.friend_spinner);
         myDataBase = FirebaseDatabase.getInstance().getReference();
+
+        myNameTV = (TextView) findViewById(R.id.my_name);
+        myNameTV.setText("My name: " + myName);
+
         initializeAllImageSticker();
+        syncImageViewSentCountWithDB();
         initializeSpinner();
     }
 
@@ -78,6 +91,36 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         }
 
         return properties;
+    }
+
+    private void displayCount() {
+        for (ImageView imageView : imageViewToTextViewMap.keySet()) {
+            TextView textView = imageViewToTextViewMap.get(imageView);
+            textView.setText("Times sent: " + imageViewSentCountMap.get(imageView));
+        }
+    }
+
+    private void syncImageViewSentCountWithDB() {
+        myDataBase.child("stickers").get().addOnCompleteListener((task) -> {
+            HashMap<String, HashMap<String, String>> tempMap = (HashMap) task.getResult().getValue();
+            for (String entryKey : tempMap.keySet()) {
+                String fromUser = tempMap.get(entryKey).get("fromUser");
+                if (fromUser != null && fromUser.equals(myName)) {
+                    String id = String.valueOf(tempMap.get(entryKey).get("id"));
+                    if (id == null) {
+                        Log.e("DB-SYNC", "ID not found...");
+                        continue;
+                    }
+                    ImageView imageViewRef = getImageViewById(Integer.parseInt(id));
+                    if (imageViewRef == null) {
+                        Log.e("DB-SYNC", "ID not supported in this app version...");
+                        continue;
+                    }
+                    imageViewSentCountMap.merge(imageViewRef, 1, Integer::sum);
+                }
+            }
+            displayCount();
+        });
     }
 
     private void initializeSpinner() {
@@ -125,6 +168,24 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         image4.setOnClickListener((v) -> imageViewOnClickListener(v));
         image5.setOnClickListener((v) -> imageViewOnClickListener(v));
         image6.setOnClickListener((v) -> imageViewOnClickListener(v));
+        imageViewSentCountMap.put(image1, 0);
+        imageViewSentCountMap.put(image2, 0);
+        imageViewSentCountMap.put(image3, 0);
+        imageViewSentCountMap.put(image4, 0);
+        imageViewSentCountMap.put(image5, 0);
+        imageViewSentCountMap.put(image6, 0);
+        image1TV = findViewById(R.id.image1SentTimesTV);
+        image2TV = findViewById(R.id.image2SentTimesTV);
+        image3TV = findViewById(R.id.image3SentTimesTV);
+        image4TV = findViewById(R.id.image4SentTimesTV);
+        image5TV = findViewById(R.id.image5SentTimesTV);
+        image6TV = findViewById(R.id.image6SentTimesTV);
+        imageViewToTextViewMap.put(image1, image1TV);
+        imageViewToTextViewMap.put(image2, image2TV);
+        imageViewToTextViewMap.put(image3, image3TV);
+        imageViewToTextViewMap.put(image4, image4TV);
+        imageViewToTextViewMap.put(image5, image5TV);
+        imageViewToTextViewMap.put(image6, image6TV);
     }
 
     public void imageViewOnClickListener(View v) {
@@ -164,6 +225,11 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         notificationManager.createNotificationChannel(channel);
     }
 
+    public void onHistoryButtonPressed(View v) {
+        Intent intent = new Intent(this, StickerReceivedHistoryActivity.class);
+        startActivity(intent);
+    }
+
     public void onSubmitButtonPressed(View v) {
         String selectedUsername = allFriends.getSelectedItem().toString();
         int selectedImageId = getCurrentSelectedId();
@@ -178,18 +244,27 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         Sticker sticker = new Sticker(selectedImageId, getCurrentUsername(), selectedUsername, now());
 
         // Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.bean_stew);
-        myDataBase.child("stickers").child(sticker.getKey()).setValue(sticker);
+        myDataBase.child("stickers").child(sticker.getKey()).setValue(sticker).addOnSuccessListener(
+                (task) -> {
+                    Context context_success = getApplicationContext();
+                    CharSequence text_success = "Sticker successfully send to " + selectedUsername;
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context_success, text_success, duration);
+                    toast.show();
+
+                    ImageView imageViewById = getImageViewById(selectedImageId);
+                    if (imageViewById == null) {
+                        Log.e("UI", "ID not supported in this app version...");
+                        return;
+                    }
+                    imageViewSentCountMap.merge(getImageViewById(selectedImageId), 1, Integer::sum);
+                    displayCount();
+                });
         myDataBase.child("users").child(userNameToUserIdMap.get(selectedUsername)).get().addOnCompleteListener((task) -> {
             HashMap tempMap = (HashMap) task.getResult().getValue();
             String token = tempMap.get("token").toString();
             new Thread(() -> sendMessageToDevice(token, sticker)).start();
         });
-
-        Context context_success = getApplicationContext();
-        CharSequence text_success = "Sticker successfully send to " + selectedUsername;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context_success, text_success, duration);
-        toast.show();
     }
 
     private void sendMessageToDevice(String targetToken, Sticker sticker) {
@@ -291,6 +366,23 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
         return sdf.format(cal.getTime());
+    }
+
+    private ImageView getImageViewById(int id) {
+        if (id == 1) {
+            return image1;
+        } else if (id == 2) {
+            return image2;
+        } else if (id == 3) {
+            return image3;
+        } else if (id == 4) {
+            return image4;
+        } else if (id == 5) {
+            return image5;
+        } else if (id == 6) {
+            return image6;
+        }
+        return null;
     }
 
     @SuppressLint("NonConstantResourceId")

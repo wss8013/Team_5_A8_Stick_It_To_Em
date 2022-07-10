@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         Intent sendStickerToFriendsIntent = new Intent(this, SendStickerToFriendsActivity.class);
+        sendStickerToFriendsIntent.putExtra("user_name", userName);
         startActivity(sendStickerToFriendsIntent);
     }
 }

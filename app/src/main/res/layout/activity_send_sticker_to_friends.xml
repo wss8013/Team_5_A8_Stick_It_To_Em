@@ -5,94 +5,184 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SendStickerToFriendsActivity">
+
+    <TextView
+        android:id="@+id/my_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/image_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/send_to"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/my_name_string" />
+
     <TextView
         android:id="@+id/send_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/image_margin"
+        android:text="Send To"
         app:layout_constraintEnd_toStartOf="@id/friend_spinner"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        android:text="Send To"/>
+        app:layout_constraintStart_toEndOf="@id/my_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Spinner
         android:id="@+id/friend_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/send_to"
-        app:layout_constraintTop_toTopOf="@id/send_to"
-        android:textSize="10sp" />
+        app:layout_constraintTop_toTopOf="@id/send_to" />
+
     <ImageView
         android:id="@+id/image1"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/sandwich"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/friend_spinner"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintEnd_toStartOf="@id/image2"
+        app:layout_constraintTop_toBottomOf="@id/friend_spinner" />
+
     <ImageView
         android:id="@+id/image2"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/goulash"
+        app:layout_constraintEnd_toStartOf="@id/image3"
         app:layout_constraintStart_toEndOf="@id/image1"
-        app:layout_constraintTop_toBottomOf="@id/friend_spinner"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintTop_toBottomOf="@id/friend_spinner" />
+
     <ImageView
         android:id="@+id/image3"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/bean_stew"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image2"
-        app:layout_constraintTop_toBottomOf="@id/friend_spinner"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintTop_toBottomOf="@id/friend_spinner" />
+
     <ImageView
         android:id="@+id/image4"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/lamb_peka"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image1"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintEnd_toStartOf="@id/image5"
+        app:layout_constraintTop_toBottomOf="@id/image1SentTimesTV" />
+
     <ImageView
         android:id="@+id/image5"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/walnutroll"
         app:layout_constraintStart_toEndOf="@id/image4"
-        app:layout_constraintTop_toBottomOf="@id/image2"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintStart_toStartOf="@+id/image5SentTimesTV"
+        app:layout_constraintTop_toBottomOf="@id/image2SentTimesTV" />
+
     <ImageView
         android:id="@+id/image6"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="@dimen/image_margin"
         android:src="@drawable/sardines"
         app:layout_constraintStart_toEndOf="@id/image5"
-        app:layout_constraintTop_toBottomOf="@id/image3"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        />
+        app:layout_constraintStart_toStartOf="@+id/image6SentTimesTV"
+        app:layout_constraintTop_toBottomOf="@id/image3SentTimesTV" />
+
 
     <Button
         android:id="@+id/submit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:onClick="onSubmitButtonPressed"
         android:text="Submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image4SentTimesTV"
+        app:layout_constraintVertical_bias="0.229" />
+
+    <Button
+        android:id="@+id/history_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onHistoryButtonPressed"
+        android:text="Receiving History"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.845"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image4SentTimesTV"
+        app:layout_constraintVertical_bias="0.229" />
+
+    <TextView
+        android:id="@+id/image1SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintBottom_toTopOf="@id/image4"
+        app:layout_constraintStart_toStartOf="@+id/image1"
+        app:layout_constraintTop_toBottomOf="@id/image1" />
+
+    <TextView
+        android:id="@+id/image2SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintBottom_toTopOf="@id/image5"
+        app:layout_constraintStart_toEndOf="@id/image1SentTimesTV"
+        app:layout_constraintStart_toStartOf="@+id/image2"
+        app:layout_constraintTop_toBottomOf="@id/image2" />
+
+    <TextView
+        android:id="@+id/image3SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintBottom_toTopOf="@id/image6"
+        app:layout_constraintStart_toEndOf="@id/image2SentTimesTV"
+        app:layout_constraintStart_toStartOf="@+id/image3"
+
+        app:layout_constraintTop_toBottomOf="@id/image3" />
+
+    <TextView
+        android:id="@+id/image4SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintStart_toStartOf="@+id/image4"
+        app:layout_constraintTop_toBottomOf="@id/image4" />
+
+    <TextView
+        android:id="@+id/image5SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintEnd_toStartOf="@id/image6SentTimesTV"
+        app:layout_constraintStart_toEndOf="@id/image4SentTimesTV"
+        app:layout_constraintTop_toBottomOf="@id/image5" />
+
+    <TextView
+        android:id="@+id/image6SentTimesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/text_margin"
+        android:text="@string/sent_times_string"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image5SentTimesTV"
+        app:layout_constraintTop_toBottomOf="@id/image6" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

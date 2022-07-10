@@ -9,4 +9,6 @@
         <item>Stella</item>
         <item>Jingjing</item>
     </string-array>
+    <string name="sent_times_string">Times sent:</string>
+    <string name="my_name_string">My Name</string>
 </resources>

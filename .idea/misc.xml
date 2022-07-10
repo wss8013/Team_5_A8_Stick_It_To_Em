@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_launcher_appicon_foreground.xml" value="0.2085" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.27545841916595426" />
-        <entry key="app/src/main/res/layout/activity_send_sticker_to_friends.xml" value="0.10677083333333333" />
+        <entry key="app/src/main/res/layout/activity_send_sticker_to_friends.xml" value="0.5144256591796875" />
+        <entry key="app/src/main/res/layout/activity_sticker_received_history.xml" value="0.35833333333333334" />
       </map>
     </option>
   </component>
