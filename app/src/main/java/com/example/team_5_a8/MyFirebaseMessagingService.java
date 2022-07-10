@@ -88,14 +88,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (remoteMessage.getNotification() != null) {
                     RemoteMessage.Notification notification = remoteMessage.getNotification();
                     showNotification(remoteMessage.getNotification());
-                    postToastMessage(notification.getTitle(), getApplicationContext());
+                    // postToastMessage(notification.getTitle(), getApplicationContext());
                 }
             } else {
                 if (remoteMessage.getData().size() > 0) {
                     RemoteMessage.Notification notification = remoteMessage.getNotification();
                     assert notification != null;
                     showNotification(notification, Integer.parseInt(Objects.requireNonNull(remoteMessage.getData().get("image_id"))));
-                    postToastMessage(remoteMessage.getData().get("title"), getApplicationContext());
+                    // postToastMessage(remoteMessage.getData().get("title"), getApplicationContext());
                 }
             }
         }

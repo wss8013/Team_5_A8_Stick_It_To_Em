@@ -211,7 +211,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
 
 
         final String resp = fcmHttpConnection(SERVER_KEY, jPayload);
-        postToastMessage("Status from Server: " + resp, getApplicationContext());
+        // postToastMessage("Status from Server: " + resp, getApplicationContext());
 
     }
 
