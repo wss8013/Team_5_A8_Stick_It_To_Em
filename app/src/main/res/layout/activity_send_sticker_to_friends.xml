@@ -10,18 +10,20 @@
         android:id="@+id/my_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/image_margin"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/my_name_string"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@id/send_to"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/my_name_string" />
+        app:layout_constraintBottom_toTopOf="@id/image1"/>
 
     <TextView
         android:id="@+id/send_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/image_margin"
         android:text="Send To"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/image2"
         app:layout_constraintEnd_toStartOf="@id/friend_spinner"
         app:layout_constraintStart_toEndOf="@id/my_name"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,26 +32,24 @@
         android:id="@+id/friend_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@id/image3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/send_to"
-        app:layout_constraintTop_toTopOf="@id/send_to" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/image1"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/sandwich"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/image2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/friend_spinner" />
 
     <ImageView
         android:id="@+id/image2"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/goulash"
         app:layout_constraintEnd_toStartOf="@id/image3"
         app:layout_constraintStart_toEndOf="@id/image1"
@@ -57,9 +57,8 @@
 
     <ImageView
         android:id="@+id/image3"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/bean_stew"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image2"
@@ -67,19 +66,17 @@
 
     <ImageView
         android:id="@+id/image4"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/lamb_peka"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/image5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image1SentTimesTV" />
 
     <ImageView
         android:id="@+id/image5"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/walnutroll"
         app:layout_constraintStart_toEndOf="@id/image4"
         app:layout_constraintStart_toStartOf="@+id/image5SentTimesTV"
@@ -87,9 +84,8 @@
 
     <ImageView
         android:id="@+id/image6"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="@dimen/image_margin"
+        android:layout_width="@dimen/image_size_big"
+        android:layout_height="@dimen/image_size_big"
         android:src="@drawable/sardines"
         app:layout_constraintStart_toEndOf="@id/image5"
         app:layout_constraintStart_toStartOf="@+id/image6SentTimesTV"
@@ -114,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onHistoryButtonPressed"
-        android:text="Receiving History"
+        android:text="@string/received_history_string"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.845"

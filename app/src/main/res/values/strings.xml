@@ -11,4 +11,8 @@
     </string-array>
     <string name="sent_times_string">Times sent:</string>
     <string name="my_name_string">My Name</string>
+    <string name="received_history_string">Received History</string>
+    <string name="stickers_string">Stickers</string>
+    <string name="from_user_string">From User</string>
+    <string name="send_time_string">Send Time</string>
 </resources>

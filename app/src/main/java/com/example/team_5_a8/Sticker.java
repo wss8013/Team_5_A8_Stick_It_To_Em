@@ -1,6 +1,8 @@
 package com.example.team_5_a8;
 
-public class Sticker {
+import androidx.annotation.NonNull;
+
+public class Sticker implements Comparable<Sticker> {
     public int id;
     public String fromUser;
     public String toUser;
@@ -17,5 +19,22 @@ public class Sticker {
 
     public String getKey() {
        return id + "|" + fromUser + "|" + toUser + "|" + sendTime;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getFromUser() {
+        return fromUser;
+    }
+
+    public String getSendTime() {
+        return sendTime;
+    }
+
+    @Override
+    public int compareTo(Sticker other) {
+        return this.sendTime.compareTo(other.getSendTime());
     }
 }

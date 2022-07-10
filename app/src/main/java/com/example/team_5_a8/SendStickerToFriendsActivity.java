@@ -131,6 +131,9 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
             // populate user id and name
             for (String userId : tempMap.keySet()) {
                 String userName = tempMap.get(userId).get("username");
+                if (userName == null || userName.equals(myName)) {
+                    continue;
+                }
                 userNames.add(userName);
                 userIdToUserNameMap.put(userId, userName);
                 userNameToUserIdMap.put(userName, userId);
@@ -227,6 +230,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
 
     public void onHistoryButtonPressed(View v) {
         Intent intent = new Intent(this, StickerReceivedHistoryActivity.class);
+        intent.putExtra("user_name", myName);
         startActivity(intent);
     }
 
@@ -241,7 +245,7 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
             toast.show();
             return;
         }
-        Sticker sticker = new Sticker(selectedImageId, getCurrentUsername(), selectedUsername, now());
+        Sticker sticker = new Sticker(selectedImageId, myName, selectedUsername, now());
 
         // Bitmap icon = BitmapFactory.decodeResource(this.getResources(), R.drawable.bean_stew);
         myDataBase.child("stickers").child(sticker.getKey()).setValue(sticker).addOnSuccessListener(

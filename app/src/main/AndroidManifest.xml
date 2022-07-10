@@ -43,6 +43,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".StickerReceivedHistoryActivity"
+            android:exported="false" />
+
         <receiver
             android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
             android:exported="true"
