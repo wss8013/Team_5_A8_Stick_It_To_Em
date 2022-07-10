@@ -20,7 +20,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     private DatabaseReference myDataBase;
-    private FirebaseAuth mAuth;
     private EditText userNameInput;
     private Button registerBtn;
 
