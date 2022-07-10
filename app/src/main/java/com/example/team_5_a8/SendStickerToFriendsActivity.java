@@ -184,6 +184,12 @@ public class SendStickerToFriendsActivity extends AppCompatActivity {
             String token = tempMap.get("token").toString();
             new Thread(() -> sendMessageToDevice(token, sticker)).start();
         });
+
+        Context context_success = getApplicationContext();
+        CharSequence text_success = "Sticker successfully send to " + selectedUsername;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context_success, text_success, duration);
+        toast.show();
     }
 
     private void sendMessageToDevice(String targetToken, Sticker sticker) {
