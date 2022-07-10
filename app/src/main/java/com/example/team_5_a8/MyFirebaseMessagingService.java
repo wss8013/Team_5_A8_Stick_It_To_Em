@@ -51,8 +51,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         userId = Settings.Secure.getString(
                 getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         myDataBase.child("users").child(userId).get().addOnCompleteListener(task -> {
-            HashMap tempMap = (HashMap) task.getResult().getValue();
-            username = tempMap.get("username").toString();
+            if (!task.isSuccessful()) {
+                Log.e("firebase", "Error getting data", task.getException());
+            } else {
+                HashMap tempMap = (HashMap) task.getResult().getValue();
+                if (tempMap == null) {
+                    Log.e("firebase", "Empty data");
+                    return;
+                }
+                username = Objects.requireNonNull(tempMap.get("username")).toString();
+            }
         });
         idToDrawable.put(1, R.drawable.sandwich);
         idToDrawable.put(2, R.drawable.goulash);

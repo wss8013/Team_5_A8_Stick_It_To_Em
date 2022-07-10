@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class StickerReceivedHistoryActivity extends AppCompatActivity {
     private List<Sticker> stickers;
@@ -49,16 +50,19 @@ public class StickerReceivedHistoryActivity extends AppCompatActivity {
         stickers = new ArrayList<>();
         myDataBase.child("stickers").get().addOnCompleteListener((task) -> {
             HashMap<String, HashMap<String, String>> tempMap = (HashMap) task.getResult().getValue();
+            if (tempMap == null) {
+                return;
+            }
             for (String entryKey : tempMap.keySet()) {
-                String fromUser = tempMap.get(entryKey).get("fromUser");
-                String id = String.valueOf(tempMap.get(entryKey).get("id"));
-                String sendTime = tempMap.get(entryKey).get("sendTime");
-                String toUser = tempMap.get(entryKey).get("toUser");
+                String fromUser = Objects.requireNonNull(tempMap.get(entryKey)).get("fromUser");
+                String id = String.valueOf(Objects.requireNonNull(tempMap.get(entryKey)).get("id"));
+                String sendTime = Objects.requireNonNull(tempMap.get(entryKey)).get("sendTime");
+                String toUser = Objects.requireNonNull(tempMap.get(entryKey)).get("toUser");
                 if (toUser != null && toUser.equals(myName)) {
                     stickers.add(new Sticker(Integer.parseInt(id), fromUser, toUser, sendTime));
                 }
             }
-            Collections.sort(stickers, Collections.reverseOrder());
+            stickers.sort(Collections.reverseOrder());
             updateReceivedHistoryRV();
         });
     }
